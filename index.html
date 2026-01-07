@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>電源を切る</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<style>
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow: hidden;
+}
+
+.screen {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.title {
+  position: absolute;
+  top: 60px;
+  width: 100%;
+  text-align: center;
+  color: #fff;
+  font-size: 18px;
+}
+
+.slider {
+  width: 80%;
+  height: 44px;
+  background: #1c1c1e;
+  border-radius: 22px;
+  position: relative;
+}
+
+.slider-text {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  line-height: 44px;
+  color: #aaa;
+  font-size: 15px;
+  pointer-events: none;
+}
+
+.knob {
+  width: 36px;
+  height: 36px;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  left: 4px;
+  top: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  touch-action: none;
+}
+
+.off {
+  animation: fadeout 0.4s forwards;
+}
+
+@keyframes fadeout {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+</style>
+</head>
+
+<body>
+<div class="screen" id="screen">
+  <div class="title">スライドで電源オフ</div>
+
+  <div class="slider" id="slider">
+    <div class="slider-text">電源オフ</div>
+    <div class="knob" id="knob"></div>
+  </div>
+</div>
+
+<script>
+const knob = document.getElementById("knob");
+const slider = document.getElementById("slider");
+const screen = document.getElementById("screen");
+
+let dragging = false;
+let startX = 0;
+
+knob.addEventListener("touchstart", e => {
+  dragging = true;
+  startX = e.touches[0].clientX;
+});
+
+document.addEventListener("touchmove", e => {
+  if (!dragging) return;
+
+  let moveX = e.touches[0].clientX - startX;
+  let max = slider.offsetWidth - knob.offsetWidth - 8;
+
+  moveX = Math.max(0, Math.min(moveX, max));
+  knob.style.left = (4 + moveX) + "px";
+
+  if (moveX > max - 10) {
+    screen.classList.add("off");
+  }
+});
+
+document.addEventListener("touchend", () => {
+  dragging = false;
+  knob.style.left = "4px";
+});
+</script>
+</body>
+</html>
