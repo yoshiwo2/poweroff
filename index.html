@@ -92,8 +92,20 @@ html, body {
   color: #bdbdbd;
 }
 
-body.off {
+/* ブラックアウト */
+.blackout {
+  position: fixed;
+  inset: 0;
   background: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  z-index: 9999;
+}
+
+body.off .blackout {
+  opacity: 1;
+  pointer-events: all;
 }
 </style>
 </head>
@@ -113,6 +125,8 @@ body.off {
   <div class="close-text">キャンセル</div>
 </div>
 
+<div class="blackout"></div>
+
 <script>
 const knob = document.querySelector('.knob');
 const slider = document.querySelector('.slider');
@@ -125,8 +139,6 @@ let maxMove = 0;
 knob.addEventListener('touchstart', e => {
   startX = e.touches[0].clientX;
   dragging = true;
-
-  // ★ ここで毎回再計算（超重要）
   maxMove = slider.offsetWidth - 54;
 });
 
@@ -135,7 +147,6 @@ document.addEventListener('touchmove', e => {
 
   currentX = e.touches[0].clientX - startX;
   currentX = Math.max(0, Math.min(currentX, maxMove));
-
   knob.style.transform = `translateX(${currentX}px)`;
 });
 
