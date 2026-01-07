@@ -40,6 +40,7 @@ html, body {
   align-items: center;
   padding: 6px;
   backdrop-filter: blur(8px);
+  box-sizing: border-box;
 }
 
 /* 電源ノブ（⏻ 使用） */
@@ -54,6 +55,7 @@ html, body {
   color: #c33;
   font-size: 20px;
   flex-shrink: 0;
+  touch-action: none;
 }
 
 .label {
@@ -62,6 +64,7 @@ html, body {
   font-size: 15px;
   color: #d0d0d0;
   letter-spacing: 0.4px;
+  user-select: none;
 }
 
 /* 補足文 */
@@ -95,6 +98,11 @@ html, body {
   font-size: 12px;
   color: #bdbdbd;
 }
+
+/* ブラックアウト状態 */
+body.off {
+  background: #020202;
+}
 </style>
 </head>
 
@@ -112,6 +120,41 @@ html, body {
   <div class="close">×</div>
   <div class="close-text">キャンセル</div>
 </div>
+
+<script>
+const knob = document.querySelector('.knob');
+const slider = document.querySelector('.slider');
+
+let startX = 0;
+let currentX = 0;
+let dragging = false;
+let maxMove = slider.offsetWidth - 54;
+
+knob.addEventListener('touchstart', e => {
+  startX = e.touches[0].clientX;
+  dragging = true;
+});
+
+document.addEventListener('touchmove', e => {
+  if (!dragging) return;
+
+  currentX = e.touches[0].clientX - startX;
+  currentX = Math.max(0, Math.min(currentX, maxMove));
+
+  knob.style.transform = `translateX(${currentX}px)`;
+});
+
+document.addEventListener('touchend', () => {
+  if (!dragging) return;
+  dragging = false;
+
+  if (currentX > maxMove * 0.6) {
+    document.body.classList.add('off');   // 擬似電源オフ
+  } else {
+    knob.style.transform = 'translateX(0)';
+  }
+});
+</script>
 
 </body>
 </html>
