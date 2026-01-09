@@ -3,54 +3,143 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Power</title>
+
+<title>Incoming</title>
 
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 
 <style>
 html, body {
   margin: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(#1c1c1c, #000);
-  font-family: system-ui, sans-serif;
-  color: #e0e0e0;
+  background: #000;
+  font-family: system-ui, -apple-system, sans-serif;
+  color: #f0f0f0;
   overflow: hidden;
 }
 
-.main {
+/* ===== 中央情報 ===== */
+.center {
   position: absolute;
-  top: 28%;
+  top: 32%;
+  width: 100%;
+  text-align: center;
+}
+
+.region {
+  font-size: 15px;
+  opacity: 0.6;
+  margin-bottom: 6px;
+}
+
+.number {
+  font-size: 36px;
+  letter-spacing: 2px;
+  font-weight: 500;
+}
+
+/* ===== 下部小ボタン ===== */
+.bottom {
+  position: absolute;
+  bottom: 120px;
   width: 100%;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: space-around;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.small-btn {
+  text-align: center;
+}
+
+/* オリジナル簡易アイコン */
+.icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  margin: 0 auto 6px;
+  position: relative;
+}
+
+/* メッセージ風 */
+.icon.message::before {
+  content: "";
+  position: absolute;
+  inset: 12px 10px 16px 10px;
+  border: 2px solid rgba(255,255,255,0.9);
+  border-radius: 4px;
+}
+
+.icon.message::after {
+  content: "";
+  position: absolute;
+  bottom: 10px;
+  left: 16px;
+  width: 10px;
+  height: 10px;
+  background: rgba(255,255,255,0.9);
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+
+/* 留守番風 */
+.icon.voice::before {
+  content: "";
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 50%;
+}
+
+.icon.voice::after {
+  content: "";
+  position: absolute;
+  top: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 22px;
+  height: 2px;
+  background: rgba(255,255,255,0.9);
+}
+
+/* ===== スライダー ===== */
+.slider-wrap {
+  position: absolute;
+  bottom: 34px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .slider {
-  width: 78%;
-  max-width: 340px;
-  height: 54px;
+  width: 82%;
+  max-width: 360px;
+  height: 60px;
   background: rgba(255,255,255,0.15);
-  border-radius: 27px;
+  border-radius: 30px;
+  padding: 6px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
-  padding: 6px;
-  backdrop-filter: blur(8px);
-  box-sizing: border-box;
 }
 
 .knob {
-  width: 42px;
-  height: 42px;
-  background: #f0f0f0;
+  width: 48px;
+  height: 48px;
+  background: #f5f5f5;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #c33;
-  font-size: 20px;
-  flex-shrink: 0;
+  color: #1a8f5a;
+  font-size: 22px;
   touch-action: none;
 }
 
@@ -58,107 +147,90 @@ html, body {
   flex: 1;
   text-align: center;
   font-size: 15px;
-  color: #d0d0d0;
-  user-select: none;
+  color: #dcdcdc;
+  letter-spacing: 0.5px;
 }
 
-.note {
-  margin-top: 12px;
-  font-size: 12px;
-  color: #9a9a9a;
-}
-
-.bottom {
-  position: absolute;
-  bottom: 46px;
-  width: 100%;
-  text-align: center;
-}
-
-.close {
-  width: 52px;
-  height: 52px;
-  margin: 0 auto 6px;
-  background: rgba(255,255,255,0.2);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 26px;
-}
-
-.close-text {
-  font-size: 12px;
-  color: #bdbdbd;
-}
-
-/* ブラックアウト */
+/* ===== ブラックアウト ===== */
 .blackout {
   position: fixed;
   inset: 0;
   background: #000;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.25s ease;
-  z-index: 9999;
+  transition: opacity 0.6s ease;
+  z-index: 999;
 }
 
-body.off .blackout {
+.blackout.active {
   opacity: 1;
-  pointer-events: all;
+  pointer-events: auto;
 }
 </style>
 </head>
 
 <body>
 
-<div class="main">
-  <div class="slider">
-    <div class="knob">⏻</div>
-    <div class="label">スライドで電源オフ</div>
-  </div>
-  <div class="note">操作を完了するにはスライドしてください</div>
+<div class="center">
+  <div class="region">日本</div>
+  <div class="number">03-831-0093</div>
 </div>
 
 <div class="bottom">
-  <div class="close">×</div>
-  <div class="close-text">キャンセル</div>
+  <div class="small-btn">
+    <div class="icon message"></div>
+    メッセージ
+  </div>
+  <div class="small-btn">
+    <div class="icon voice"></div>
+    留守番
+  </div>
 </div>
 
-<div class="blackout"></div>
+<div class="slider-wrap">
+  <div class="slider" id="slider">
+    <div class="knob" id="knob">📞</div>
+    <div class="label">スライドして応答</div>
+  </div>
+</div>
+
+<div class="blackout" id="blackout"></div>
 
 <script>
-const knob = document.querySelector('.knob');
-const slider = document.querySelector('.slider');
+const knob = document.getElementById('knob');
+const slider = document.getElementById('slider');
+const blackout = document.getElementById('blackout');
 
 let startX = 0;
 let currentX = 0;
 let dragging = false;
-let maxMove = 0;
 
 knob.addEventListener('touchstart', e => {
   startX = e.touches[0].clientX;
   dragging = true;
-  maxMove = slider.offsetWidth - 54;
 });
 
 document.addEventListener('touchmove', e => {
   if (!dragging) return;
 
   currentX = e.touches[0].clientX - startX;
-  currentX = Math.max(0, Math.min(currentX, maxMove));
+  const max = slider.offsetWidth - knob.offsetWidth - 12;
+
+  if (currentX < 0) currentX = 0;
+  if (currentX > max) currentX = max;
+
   knob.style.transform = `translateX(${currentX}px)`;
+
+  if (currentX > max * 0.9) {
+    blackout.classList.add('active');
+    dragging = false;
+  }
 });
 
 document.addEventListener('touchend', () => {
   if (!dragging) return;
+  knob.style.transform = 'translateX(0)';
   dragging = false;
-
-  if (currentX > maxMove * 0.6) {
-    document.body.classList.add('off');
-  } else {
-    knob.style.transform = 'translateX(0)';
-  }
 });
 </script>
 
